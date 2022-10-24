@@ -1,6 +1,6 @@
 from CalculatedData import CalculatedData
 import telebot
-from telebot import types
+# from telebot import types
 
 def data_output():
     calculatedData = CalculatedData()
@@ -19,9 +19,9 @@ bot = telebot.TeleBot('5283971555:AAG9Yq3kQ5dNriD04o7UtuMUphMABCrR8Ao')
 @bot.message_handler(commands=["start"])
 def start(message, res=False):
     # Добавляем две кнопки
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    item1 = types.KeyboardButton("Курсы")
-    item2 = types.KeyboardButton("Курс Узбекистана")
+    markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
+    item1 = telebot.types.KeyboardButton("Курсы")
+    item2 = telebot.types.KeyboardButton("Курс Узбекистана")
     markup.add(item1)
     markup.add(item2)
     bot.send_message(message.chat.id, 'Нажми: \nКурсы - для вывода текущих курсов\nКурс Узбекистана — для расчета курса вывода через Тинькофф в Узбекистан',  reply_markup=markup)
