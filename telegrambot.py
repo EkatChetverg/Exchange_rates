@@ -32,7 +32,7 @@ def handle_text(message):
     if message.text.strip() == 'Курсы' :
         bot.send_message(message.chat.id, data_output(), parse_mode='Markdown')
     elif message.text.strip() == 'Курс Узбекистана':
-        bot.send_message(message.chat.id, "Напишите курс rub-usd в Тинькофе для отправки в Узбекистан (разделитель точка)", parse_mode='Markdown')
+        bot.send_message(message.chat.id, "Напишите курс rub-uzs в Тинькофе для отправки в Узбекистан (разделитель точка)", parse_mode='Markdown')
     else:
         bot.send_message(message.chat.id, data_output_uzb(float(message.text)), parse_mode='Markdown')
 

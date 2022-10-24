@@ -18,7 +18,7 @@ class Currency:
 		self.headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36'}
 
 		# Предварительный расчет
-		self.official_usd_rub = self.str_to_float(self.get_currency_price_google(usd_rub))
+		self.official_usd_rub = self.str_to_float(self.get_currency_price_google(self.usd_rub))
 
 	# Преобразуем строку в число
 	def str_to_float(self, text):
