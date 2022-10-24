@@ -35,6 +35,7 @@ class CalculatedData:
         result = sell_USD_ravnak / course
         overpayment = currency.overpayment(result)
         description = f'\nКурс через Узбекистан (Тинькофф): {color.BOLD}{round(result, 2)}{color.BOLD_END}. Переплата: {overpayment}%.'
+
         return description
 
     def exchange_rate_calculation(self):
