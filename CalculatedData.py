@@ -27,11 +27,6 @@ class CalculatedData:
         list_course = currency.ger_currency_price_ravnak(list_ravnak)
         sell_USD_ravnak = currency.str_to_float(list_course['USD_sell'])
 
-        print(course)
-        print(type(course))
-        print(sell_USD_ravnak)
-        print(type(sell_USD_ravnak))
-
         result = sell_USD_ravnak / course
         overpayment = currency.overpayment(result)
         description = f'\nКурс через Узбекистан (Тинькофф): {color.BOLD}{round(result, 2)}{color.BOLD_END}. Переплата: {overpayment}%.'
