@@ -72,28 +72,28 @@ class CalculatedData:
         kgs_rub = currency.get_currency_price_kursy_mir('Кыргызский сом')
         KGS_mir = currency.str_to_float(kgs_rub) * sell_USD_kicb
         result["KGS_mir"] = {"result": round(KGS_mir, 2),
-                             "formula": f"({str(kgs_rub)} * {str(sell_USD_kicb)})",
+                             "formula": f"({str(kgs_rub)} × {str(sell_USD_kicb)})",
                              "overpayment": currency.overpayment(KGS_mir)}
 
         kgz_rub = currency.ger_currency_price_gold_crown('KGZ')
         KGS_gc_usd = kgz_rub / buy_USD_kicb * sell_USD_kicb
         result["KGS_gc_usd"] = {"result": round(KGS_gc_usd, 2),
-                                "formula": f"({str(kgz_rub)} / {str(buy_USD_kicb)} * {str(sell_USD_kicb)})",
+                                "formula": f"({str(kgz_rub)} / {str(buy_USD_kicb)} × {str(sell_USD_kicb)})",
                                 "overpayment": currency.overpayment(KGS_gc_usd)}
 
         uzb_rub = currency.ger_currency_price_gold_crown('UZB')
         UZB_gc = uzb_rub / buy_USD_ravnak * sell_USD_ravnak
         result["UZB_gc"] = {"result": round(UZB_gc, 2),
-                            "formula": f"({str(uzb_rub)} / {str(buy_USD_ravnak)} * {str(sell_USD_ravnak)})",
+                            "formula": f"({str(uzb_rub)} / {str(buy_USD_ravnak)} × {str(sell_USD_ravnak)})",
                             "overpayment": currency.overpayment(UZB_gc)}
 
         usd_rub = currency.get_currency_price_bcs('buy', 'USD')
         bcs_swift1 = usd_rub * 1.02
         bcs_swift2 = bcs_swift1 * 1.01
         bcs_swift3 = bcs_swift1 * 1.005
-        result["bcs_swift"] = {"result1": round(bcs_swift1, 2), "formula1": f"({str(usd_rub)} * 1.02)", "overpayment1": currency.overpayment(bcs_swift1),
-                               "result2": round(bcs_swift2, 2), "formula2": f"({str(bcs_swift1)} * 1.01)", "overpayment2": currency.overpayment(bcs_swift2),
-                               "result3": round(bcs_swift3, 2), "formula3": f"({str(bcs_swift1)} * 1.005)", "overpayment3": currency.overpayment(bcs_swift3)}
+        result["bcs_swift"] = {"result1": round(bcs_swift1, 2), "formula1": f"({str(usd_rub)} × 1.02)", "overpayment1": currency.overpayment(bcs_swift1),
+                               "result2": round(bcs_swift2, 2), "formula2": f"({str(bcs_swift1)} × 1.01)", "overpayment2": currency.overpayment(bcs_swift2),
+                               "result3": round(bcs_swift3, 2), "formula3": f"({str(bcs_swift1)} × 1.005)", "overpayment3": currency.overpayment(bcs_swift3)}
 
         final_text = self.composing_message(result, this_telegram)
         return final_text
