@@ -29,7 +29,8 @@ class CalculatedData:
 
         result = sell_USD_ravnak / course
         overpayment = currency.overpayment(result)
-        description = f'\nКурс через Узбекистан (Тинькофф): {color.BOLD}{round(result, 2)}{color.BOLD_END}. Переплата: {overpayment}%.'
+        formula = f"{str(sell_USD_ravnak)} / {str(course)}"
+        description = f'\nКурс через Узбекистан (Тинькофф): {color.BOLD}{round(result, 2)}{color.BOLD_END}. ({formula}) Переплата: {overpayment}%.'
 
         return description
 
