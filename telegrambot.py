@@ -4,8 +4,7 @@ import telebot
 
 def data_output():
     calculatedData = CalculatedData()
-    result_courses = calculatedData.exchange_rate_calculation()
-    final_text = calculatedData.composing_message(result_courses, True)
+    final_text = calculatedData.exchange_rate_calculation(True)
     return final_text
 
 def data_output_uzb(course):
