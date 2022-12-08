@@ -7,12 +7,17 @@ class Currency:
 
 	def __init__(self):
 		# Ссылки на сайты
+		self.usd_ils = 'https://www.google.com/search?q=usd+to+ils'
 		self.usd_rub ='https://www.google.com/search?q=usd+to+rub'
 		self.gold_crown = 'https://koronapay.com/transfers/online/api/transfers/tariffs?sendingCountryId=RUS&sendingCurrencyId=810&receivingCountryId=ll_name_country_ll&receivingCurrencyId=840&paymentMethod=debitCard&receivingAmount=100&receivingMethod=cash&paidNotificationEnabled=true'
 		self.kursy_mir = 'https://mironline.ru/support/list/kursy_mir/'
 		self.kicb = 'https://kicb.net/'
 		self.bcs = 'https://bank.bcs.ru/get_courses_update'
 		self.ravnak = 'https://ravnaqbank.uz/ru/services/exchange-rates/'
+
+		self.percent_kicb = 0.025
+		self.percent_ravnak = 0.02
+		self.percent_gold_crown = 0.05
 
 		# Заголовки для передачи вместе с URL
 		self.headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36'}
@@ -140,4 +145,10 @@ class Currency:
 		return round(new_value, 2)
 
 
+	# def get_currency_price_google2(self):
+	# 	full_page = requests.get("https://www.tradingview.com/symbols/USDRUB_TOM/", headers=self.headers) # Парсим всю страницу
+	# 	soup = BeautifulSoup(full_page.content, 'html.parser') # Разбираем через BeautifulSoup
+	# 	print(soup)
 
+# cur = Currency()
+# cur.get_currency_price_google2()
