@@ -14,16 +14,19 @@ class Currency:
 		self.kicb = 'https://kicb.net/'
 		self.bcs = 'https://bank.bcs.ru/get_courses_update'
 		self.ravnak = 'https://ravnaqbank.uz/ru/services/exchange-rates/'
+		self.tinkoff = 'https://www.tinkoff.ru/invest/currencies/USDRUB/'
+		self.binance = 'https://p2p.binance.com/bapi/c2c/v2/friendly/c2c/adv/search'
 
 		self.percent_kicb = 1.025
-		self.percent_ravnak = 1.02
+		self.percent_ravnak1 = 1.024
+		self.percent_ravnak2 = 0.01
 		self.percent_gold_crown = 1.05
 
 		# Заголовки для передачи вместе с URL
 		self.headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36'}
 
 		# Предварительный расчет
-		self.official_usd_rub = self.str_to_float(self.get_currency_price_google(self.usd_rub))
+		self.official_usd_rub = self.get_currency_price_usd_rub()
 
 	# Преобразуем строку в число
 	def str_to_float(self, text):
@@ -34,13 +37,32 @@ class Currency:
 			new_value = -1
 		return new_value
 
+	def get_currency_price_usd_rub(self):
+		# official_usd_rub_google = self.get_currency_price_google(self.usd_rub)
+		official_usd_rub_tinkoff = self.get_currency_price_tinkoff()
+		return official_usd_rub_tinkoff
+
 	# Метод для получения курса валюты с переданного сайта
 	def get_currency_price_google(self, url_site):
 		try:
 			full_page = requests.get(url_site, headers=self.headers) # Парсим всю страницу
 			soup = BeautifulSoup(full_page.content, 'html.parser') # Разбираем через BeautifulSoup
-			course = soup.findAll("span", {"class": "DFlfde", "class": "SwHCTb", "data-precision": 2}) # Получаем нужное для нас значение и возвращаем его
-			return course[0].text
+			course_text = soup.findAll("span", {"class": "DFlfde", "class": "SwHCTb", "data-precision": 2}) # Получаем нужное для нас значение и возвращаем его
+			course = self.str_to_float(course_text[0].text)
+			return course
+		except:
+			return -1
+
+	# Метод для получения курса валюты с сайта Tinkoff
+	def get_currency_price_tinkoff(self):
+		try:
+			full_page = requests.get(self.tinkoff, headers=self.headers) # Парсим всю страницу
+			soup = BeautifulSoup(full_page.content, 'html.parser') # Разбираем через BeautifulSoup
+			convert = soup.findAll("div", {"class": "SecurityInvitingScreen__price_FSP8P"})[0]
+			course = convert.text.strip()
+			course = course[:-2]
+			course = self.str_to_float(course)
+			return course
 		except:
 			return -1
 
@@ -144,11 +166,26 @@ class Currency:
 		new_value = value * 100 / self.official_usd_rub - 100
 		return round(new_value, 2)
 
-
-	# def get_currency_price_google2(self):
-	# 	full_page = requests.get("https://www.tradingview.com/symbols/USDRUB_TOM/", headers=self.headers) # Парсим всю страницу
-	# 	soup = BeautifulSoup(full_page.content, 'html.parser') # Разбираем через BeautifulSoup
-	# 	print(soup)
+	# Метод для получения курса валюты с binance
+	def get_currency_price_binance(self):
+		try:
+			data = {
+				"fiat": "RUB",
+				"page": 1,
+				"rows": 10,
+				"tradeType": "buy",
+				"asset": "USDT",
+				"countries": [],
+				"proMerchantAds": False,
+				"publisherType": None,
+				"payTypes": ["TinkoffNew"]
+			}
+			response = requests.post(self.binance, headers=self.headers, json=data)
+			price = response.json()['data'][0]['adv']['price']
+			course = self.str_to_float(price)
+			return course
+		except:
+			return -1
 
 # cur = Currency()
-# cur.get_currency_price_google2()
+# cur.get_currency_price_binance()

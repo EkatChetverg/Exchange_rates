@@ -19,7 +19,7 @@ class CalculatedData:
         official_result = {}
 
         # Обновляем офиц данные
-        official_result["official_usd_rub"] = currency.str_to_float(currency.get_currency_price_google(currency.usd_rub))
+        official_result["official_usd_rub"] = currency.get_currency_price_usd_rub()
 
         # собираем данные с банка ravnak
         list_ravnak = []
@@ -27,7 +27,7 @@ class CalculatedData:
         list_course = currency.ger_currency_price_ravnak(list_ravnak)
         sell_USD_ravnak = currency.str_to_float(list_course['USD_sell'])
 
-        usd_ils = currency.str_to_float(currency.get_currency_price_google(currency.usd_ils))
+        usd_ils = currency.get_currency_price_google(currency.usd_ils)
         official_result["official_usd_ils"] = usd_ils
 
         name_of_column = {"name": "Name of way",
@@ -37,14 +37,16 @@ class CalculatedData:
                           "formula": "Formula $",
                           "formula_ils": "Formula ₪"}
 
-        result_usd = round(sell_USD_ravnak / course, 2)
-        result_ils = round(result_usd / usd_ils * currency.percent_ravnak, 2)
-        result["UZB_tink"] = {"result": result_usd,
-                              "result_ils": result_ils,
+        result_usd = sell_USD_ravnak / course
+        result_usd_text = round(result_usd, 2)
+        result_ils = result_usd / usd_ils * (currency.percent_ravnak1 + currency.percent_ravnak2)
+        result_ils_text = round(result_ils, 2)
+        result["UZB_tink"] = {"result": result_usd_text,
+                              "result_ils": result_ils_text,
                               "name": "Uzbekistan (Tinkoff)",
                               "overpayment": f'{currency.overpayment(result_usd)}%',
-                              "formula": f'{result_usd}$ = {str(sell_USD_ravnak)} / {str(course)}',
-                              "formula_ils": f'{result_ils}₪ = {result_usd} / {usd_ils} * {str(currency.percent_ravnak)}'}
+                              "formula": f'{result_usd_text}$ = {str(sell_USD_ravnak)} / {str(course)}',
+                              "formula_ils": f'{result_ils_text}₪ = {result_usd_text} / {usd_ils} * ({str(currency.percent_ravnak1)} + {str(currency.percent_ravnak2)})'}
 
         final_text = self.composing_message(official_result, name_of_column, result, True)
 
@@ -56,7 +58,7 @@ class CalculatedData:
         currency = Currency()
 
         # Обновляем офиц данные
-        currency.official_usd_rub = currency.str_to_float(currency.get_currency_price_google(currency.usd_rub))
+        currency.official_usd_rub = currency.get_currency_price_usd_rub()
 
         # собираем данные с банка kicb
         list_kicb = []
@@ -77,7 +79,7 @@ class CalculatedData:
         buy_USD_ravnak = currency.str_to_float(list_course['USD_buy'])
 
         official_result["official_usd_rub"] = currency.official_usd_rub
-        usd_ils = currency.str_to_float(currency.get_currency_price_google(currency.usd_ils))
+        usd_ils = currency.get_currency_price_google(currency.usd_ils)
         official_result["official_usd_ils"] = usd_ils
 
         name_of_column = {"name": "Name of way",
@@ -96,12 +98,12 @@ class CalculatedData:
                                 "result_ils": round(KGS_gc_rub_ils * currency.percent_kicb, 2),
                                 "name": "Kyrgyzstan (GC rub)"}
 
-        kgs_rub = currency.str_to_float(currency.get_currency_price_kursy_mir('Кыргызский сом'))
-        KGS_mir = kgs_rub * sell_USD_kicb
-        KGS_mir_ils = KGS_mir / usd_ils
-        result["KGS_mir"] = {"result": round(KGS_mir, 2),
-                             "result_ils": round(KGS_mir_ils * currency.percent_kicb, 2),
-                             "name": "Kyrgyzstan (mir)"}
+        # kgs_rub = currency.str_to_float(currency.get_currency_price_kursy_mir('Кыргызский сом'))
+        # KGS_mir = kgs_rub * sell_USD_kicb
+        # KGS_mir_ils = KGS_mir / usd_ils
+        # result["KGS_mir"] = {"result": round(KGS_mir, 2),
+        #                      "result_ils": round(KGS_mir_ils * currency.percent_kicb, 2),
+        #                      "name": "Kyrgyzstan (mir)"}
 
         # kgz_rub = currency.ger_currency_price_gold_crown('KGZ')
         # KGS_gc_usd = kgz_rub / buy_USD_kicb * sell_USD_kicb
@@ -110,11 +112,23 @@ class CalculatedData:
         #                         "result_ils": round(KGS_gc_usd_ils * currency.percent_kicb, 2),
         #                         "name": "Kyrgyzstan (GC usd)"}
 
+        freedom_finance = currency.official_usd_rub * 1.004 * 1.01
+        freedom_finance_ils = freedom_finance / usd_ils * 1.02
+        result["freedom_finance"] = {"result": round(freedom_finance, 2),
+                                    "result_ils": round(freedom_finance_ils, 2),
+                                    "name": "Freedom finance"}
+
+        binance = currency.get_currency_price_binance()
+        binance_ils = binance / usd_ils
+        result["binance"] = {"result": round(binance, 2),
+                             "result_ils": round(binance_ils, 2),
+                             "name": "Binance"}
+
         uzb_rub = currency.ger_currency_price_gold_crown('UZB')
         UZB_gc = uzb_rub / buy_USD_ravnak * sell_USD_ravnak
         UZB_gc_ils = UZB_gc / usd_ils
         result["UZB_gc"] = {"result": round(UZB_gc, 2),
-                            "result_ils": round(UZB_gc_ils * currency.percent_ravnak, 2),
+                            "result_ils": round(UZB_gc_ils * (currency.percent_ravnak1 + currency.percent_ravnak2), 2),
                             "name": "Uzbekistan (GC)"}
 
         bcs_usd_rub = currency.get_currency_price_bcs('buy', 'USD')
@@ -138,7 +152,7 @@ class CalculatedData:
 
         if full_calculations:
             additional_information = {"usd_ils": str(usd_ils),
-                                      "kgs_rub": str(kgs_rub),
+                                      # "kgs_rub": str(kgs_rub),
                                       # "kgz_rub": str(kgz_rub),
                                       "uzb_rub": str(uzb_rub),
                                       "bcs_usd_rub": str(bcs_usd_rub),
@@ -167,17 +181,25 @@ class CalculatedData:
         result["KGS_gc_rub"]["formula"] = f'{result["KGS_gc_rub"]["result"]}$ = {additional_information["sell_USD_kicb"]} / {additional_information["buy_rub_kicb"]} * 1.005'
         result["KGS_gc_rub"]["formula_ils"] = f'{result["KGS_gc_rub"]["result_ils"]}₪ = {result["KGS_gc_rub"]["result"]} / {additional_information["usd_ils"]} * {str(currency.percent_kicb)}'
 
-        result["KGS_mir"]["overpayment"] = f'{currency.overpayment(result["KGS_mir"]["result"])}%'
-        result["KGS_mir"]["formula"] = f'{result["KGS_mir"]["result"]}$ = {additional_information["kgs_rub"]} * {additional_information["sell_USD_kicb"]}'
-        result["KGS_mir"]["formula_ils"] = f'{result["KGS_mir"]["result_ils"]}₪ = {result["KGS_mir"]["result"]} / {additional_information["usd_ils"]} * {str(currency.percent_kicb)}'
+        # result["KGS_mir"]["overpayment"] = f'{currency.overpayment(result["KGS_mir"]["result"])}%'
+        # result["KGS_mir"]["formula"] = f'{result["KGS_mir"]["result"]}$ = {additional_information["kgs_rub"]} * {additional_information["sell_USD_kicb"]}'
+        # result["KGS_mir"]["formula_ils"] = f'{result["KGS_mir"]["result_ils"]}₪ = {result["KGS_mir"]["result"]} / {additional_information["usd_ils"]} * {str(currency.percent_kicb)}'
 
         # result["KGS_gc_usd"]["overpayment"] = f'{currency.overpayment(result["KGS_gc_usd"]["result"])}%'
         # result["KGS_gc_usd"]["formula"] = f'{result["KGS_gc_usd"]["result"]}$ = {additional_information["kgz_rub"]} / {additional_information["buy_USD_kicb"]} * {additional_information["sell_USD_kicb"]}'
         # result["KGS_gc_usd"]["formula_ils"] = f'{result["KGS_gc_usd"]["result_ils"]}₪ = {result["KGS_gc_usd"]["result"]} / {additional_information["usd_ils"]} * {str(currency.percent_kicb)}'
 
+        result["freedom_finance"]["overpayment"] = f'{currency.overpayment(result["freedom_finance"]["result"])}%'
+        result["freedom_finance"]["formula"] = f'{result["freedom_finance"]["result"]}$ = {currency.official_usd_rub} * 1.004 * 1.01'
+        result["freedom_finance"]["formula_ils"] = f'{result["freedom_finance"]["result_ils"]}₪ = {result["freedom_finance"]["result"]} / {additional_information["usd_ils"]} * 1.02'
+
+        result["binance"]["overpayment"] = f'{currency.overpayment(result["binance"]["result"])}%'
+        result["binance"]["formula"] = f'{result["binance"]["result"]}$ = данные с binance'
+        result["binance"]["formula_ils"] = f'{result["binance"]["result_ils"]}₪ = {result["binance"]["result"]} / {additional_information["usd_ils"]}'
+
         result["UZB_gc"]["overpayment"] = f'{currency.overpayment(result["UZB_gc"]["result"])}%'
         result["UZB_gc"]["formula"] = f'{result["UZB_gc"]["result"]}$ = {additional_information["uzb_rub"]} / {additional_information["buy_USD_ravnak"]} * {additional_information["sell_USD_ravnak"]}'
-        result["UZB_gc"]["formula_ils"] = f'{result["UZB_gc"]["result_ils"]}₪ = {result["UZB_gc"]["result"]} / {additional_information["usd_ils"]} * {str(currency.percent_ravnak)}'
+        result["UZB_gc"]["formula_ils"] = f'{result["UZB_gc"]["result_ils"]}₪ = {result["UZB_gc"]["result"]} / {additional_information["usd_ils"]} * ({str(currency.percent_ravnak1)} + {str(currency.percent_ravnak2)})'
 
         result["bcs_swift1"]["overpayment"] = f'{currency.overpayment(result["bcs_swift1"]["result"])}%'
         result["bcs_swift1"]["formula"] = f'{result["bcs_swift1"]["result"]}$ = {additional_information["bcs_usd_rub"]} * 1.02'
@@ -232,6 +254,7 @@ class CalculatedData:
 
 
 cd = CalculatedData()
-# usd_ils = cd.exchange_rate_calculation(True)
-usd_ils = cd.exchange_rate_calculation_uzb(171)
+usd_ils = cd.exchange_rate_calculation(True)
+# usd_ils = cd.exchange_rate_calculation_uzb(171)
 print(usd_ils)
+
